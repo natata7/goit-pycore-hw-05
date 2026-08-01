@@ -1,9 +1,16 @@
+from functools import wraps
+
 def input_error(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except ValueError:
-            return "Give me name and phone please."
+            return "Enter the argument for the command"
+        except IndexError:
+            return "Enter the argument for the command"
+        except KeyError:
+            return "Contact not found."
 
     return inner
 
@@ -24,7 +31,7 @@ def change_contact(args: list[str], contacts: dict) -> str:
     name, phone = args
 
     if name not in contacts:
-        return "Contact not found."
+        raise KeyError
 
     contacts[name] = phone
     return "Contact updated."
@@ -58,34 +65,30 @@ def main():
             print("Invalid command.")
             continue
 
-        try:
-            command, args = parse_input(user_input)
+        command, args = parse_input(user_input)
 
-            match command:
-                case "close" | "exit":
-                    print("Good bye!")
-                    break
+        match command:
+            case "close" | "exit":
+                print("Good bye!")
+                break
 
-                case "hello":
-                    print("How can I help you?")
+            case "hello":
+                print("How can I help you?")
 
-                case "add":
-                    print(add_contact(args, contacts))
+            case "add":
+                print(add_contact(args, contacts))
 
-                case  "change":
-                    print(change_contact(args, contacts))
+            case  "change":
+                print(change_contact(args, contacts))
 
-                case "phone":
-                    print(show_phone(args, contacts))
+            case "phone":
+                print(show_phone(args, contacts))
 
-                case "all":
-                    print(show_all(contacts))
+            case "all":
+                print(show_all(contacts))
 
-                case _:
-                    print("Invalid command.")
-
-        except (ValueError, IndexError):
-            print("Invalid command.")
+            case _:
+                print("Invalid command.")
 
 
 if __name__ == "__main__":
