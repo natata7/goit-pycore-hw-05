@@ -1,13 +1,15 @@
-def generator_numbers(text):
+import re
+from typing import Generator, Callable
+
+def generator_numbers(text: str) -> Generator[float, None, None]:
     """Генератор чисел з рядка тексту"""
 
-    for word in text.split():
-        try:
-            yield float(word)
-        except ValueError:
-            continue
+    pattern = r"\b\d+\.\d+\b"
 
-def sum_profit(text, generator):
+    for match in re.finditer(pattern, text):
+        yield float(match.group())
+
+def sum_profit(text: str, generator: Callable) -> float:
     """Обчислення загального доходу працівника"""
 
     return sum(generator(text))
